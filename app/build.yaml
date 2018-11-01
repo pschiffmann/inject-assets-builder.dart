@@ -1,0 +1,9 @@
+targets:
+  $default:
+    builders:
+      reverse_asset_import:
+        enabled: true
+        options:
+          file_extensions: [".txt"]
+          substitutions:
+            "dep|asset.default.txt": "app|asset.txt"
