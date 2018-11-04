@@ -1,6 +1,0 @@
-# targets:
-#   $default:
-#     builders:
-#       reverse_asset_import:
-#         options:
-#           file_extensions: [".txt"]

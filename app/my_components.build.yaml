@@ -1,0 +1,7 @@
+targets:
+  $default:
+    builders:
+      inject_scss_variables:
+        options:
+          substitutions:
+            "dep|_variables.default.scss": "app|_variables.scss"

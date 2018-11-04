@@ -1,0 +1,5 @@
+@import 'variables';
+
+@mixin status-color {
+  background-color: $color;
+}

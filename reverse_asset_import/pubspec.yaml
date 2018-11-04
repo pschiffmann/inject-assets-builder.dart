@@ -1,5 +1,0 @@
-name: reverse_asset_import
-environment:
-  sdk: '>=2.0.0 <3.0.0'
-dependencies:
-  build: any

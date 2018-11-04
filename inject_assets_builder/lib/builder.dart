@@ -22,8 +22,7 @@ Map<AssetId, AssetId> _extractSubstitutionsConfig(BuilderOptions options) {
   final result = <AssetId, AssetId>{};
   final rawSubstitutions = options.config[substitutionsKey];
   if (rawSubstitutions is Map) {
-    (options.config[substitutionsKey] as Map)
-        .forEach((defaultAsset, substitution) {
+    rawSubstitutions.forEach((defaultAsset, substitution) {
       result[AssetId.parse(defaultAsset)] = AssetId.parse(substitution);
     });
   }
@@ -32,17 +31,17 @@ Map<AssetId, AssetId> _extractSubstitutionsConfig(BuilderOptions options) {
 
 Map<String, List<String>> _extractFileExtensionsConfig(BuilderOptions options) {
   final result = <String, List<String>>{};
-  for (final extension in options.config[fileExtensionsKey]) {
-    result['.default$extension'] = [extension];
+  if (options.config is List) {
+    for (final extension in options.config[fileExtensionsKey]) {
+      result['.default$extension'] = [extension];
+    }
   }
   return result;
 }
 
 ///
 class InjectAssetsBuilder implements Builder {
-  InjectAssetsBuilder(this.substitutions, this.buildExtensions) {
-    log.warning(substitutions);
-  }
+  InjectAssetsBuilder(this.substitutions, this.buildExtensions);
 
   final Map<AssetId, AssetId> substitutions;
   final Map<String, List<String>> buildExtensions;
@@ -57,7 +56,7 @@ class InjectAssetsBuilder implements Builder {
     }
     final target =
         AssetId(defaultAsset.package, _removeDefaultInfix(defaultAsset.path));
-    log.warning('Copying asset $source to $target');
+    log.info('Copying asset $source to $target');
     return buildStep.writeAsString(
         target, await buildStep.readAsString(source));
   }

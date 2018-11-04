@@ -2,6 +2,7 @@ name: app
 environment:
   sdk: '>=2.0.0 <3.0.0'
 dependencies:
-  dep:
-    path: ../dep
+  my_components:
+    path: ../my_components
   build_runner: any
+  sass_builder: ^2.1.2

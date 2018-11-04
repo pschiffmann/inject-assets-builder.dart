@@ -1,6 +1,0 @@
-name: dep
-environment:
-  sdk: '>=2.0.0 <3.0.0'
-dependencies:
-  reverse_asset_import:
-    path: ../reverse_asset_import
