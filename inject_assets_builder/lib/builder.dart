@@ -31,7 +31,7 @@ Map<AssetId, AssetId> _extractSubstitutionsConfig(BuilderOptions options) {
 
 Map<String, List<String>> _extractFileExtensionsConfig(BuilderOptions options) {
   final result = <String, List<String>>{};
-  if (options.config is List) {
+  if (options.config[fileExtensionsKey] is List) {
     for (final extension in options.config[fileExtensionsKey]) {
       result['.default$extension'] = [extension];
     }
