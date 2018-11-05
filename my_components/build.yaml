@@ -1,9 +1,8 @@
 targets:
   $default:
     builders:
-      inject_scss_variables:
+      my_components|inject_scss_variables:
         enabled: true
-        runs_before: ['sass_builder']
         generate_for:
           include:
             - 'lib/_variables.default.scss'
@@ -18,4 +17,4 @@ builders:
       options:
         file_extensions: ['.scss']
     runs_before:
-      sass_builder
+      - sass_builder
