@@ -1,5 +1,5 @@
 name: inject_assets_builder
-version: 1.0.0
+version: 1.0.0+1
 description: A builder that makes it possible for a package to access files from packages depending on it.
 authors:
   - Philipp Schiffmann <philippschiffmann93@gmail.com>
