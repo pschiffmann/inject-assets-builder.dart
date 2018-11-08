@@ -11,7 +11,7 @@ jobs:
     - name: dartfmt
       script: dartfmt --fix -n --set-exit-if-changed .
       dart: stable
-    - name: build_runner test
+    - name: unit tests
       script: pub run test
 
 # Only building master means that we don't run two builds for each pull request.

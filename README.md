@@ -1,6 +1,8 @@
 inject assets builder
 =====================
 
+[![Build Status](https://travis-ci.com/pschiffmann/inject-assets-builder.dart.svg?branch=master)](https://travis-ci.com/pschiffmann/inject-assets-builder.dart)
+
 This package contains a [builder][build] that makes it possible for a package to access files from packages depending on it.
 
 _The build package uses the syntax `pkg|lib/foo.txt` to refer to the file `foo.txt` in the `lib/` directory of package `pkg`. In this document, I'll use the same syntax for all references to files to avoid ambiguity._
