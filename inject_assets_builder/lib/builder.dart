@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:build/build.dart';
+import 'package:meta/meta.dart';
 
 const assetOverridesKey = 'asset_overrides';
 const fileExtensionsKey = 'file_extensions';
@@ -19,8 +20,9 @@ Builder injectAssetsBuilder(BuilderOptions options) {
 
   final buildExtensions = _extractFileExtensionsConfig(options);
   return InjectAssetsBuilder(
-      _extractAssetOverridesConfig(options, buildExtensions.keys),
-      buildExtensions);
+      assetOverrides:
+          _extractAssetOverridesConfig(options, buildExtensions.keys),
+      buildExtensions: buildExtensions);
 }
 
 Map<AssetId, AssetId> _extractAssetOverridesConfig(
@@ -64,12 +66,16 @@ Map<String, List<String>> _extractFileExtensionsConfig(BuilderOptions options) {
 }
 
 class InjectAssetsBuilder implements Builder {
-  InjectAssetsBuilder(this.assetOverrides, this.buildExtensions);
+  InjectAssetsBuilder(
+      {@required this.assetOverrides, @required this.buildExtensions});
 
   final Map<AssetId, AssetId> assetOverrides;
+
+  @override
   final Map<String, List<String>> buildExtensions;
 
-  Future<dynamic> build(BuildStep buildStep) async {
+  @override
+  Future build(BuildStep buildStep) async {
     final defaultAsset = buildStep.inputId;
     var source = assetOverrides[defaultAsset];
     if (source == null) {
