@@ -1,4 +1,9 @@
 name: inject_assets_builder
+version: 1.0.0
+description: This package contains a builder that makes it possible for a package to access files from packages depending on it.
+authors:
+  - Philipp Schiffmann <philippschiffmann93@gmail.com>
+homepage: https://github.com/pschiffmann/inject-assets-builder.dart
 environment:
   sdk: '>=2.0.0 <3.0.0'
 dependencies:
@@ -6,3 +11,4 @@ dependencies:
   #build: ^0.12.7
   #build_config: ^0.3.1
   build: any
+  build_test: any

@@ -1,8 +1,8 @@
 global_options:
-  my_components|inject_scss_variables:
+  inject_assets_builder|inject_scss_files:
     options:
-      substitutions:
-        "my_components|lib/_variables.default.scss": "app|lib/_variables.scss"
+      asset_overrides:
+        'my_components|lib/_variables.default.scss': 'app|lib/_variables.scss'
 
 targets:
   $default:

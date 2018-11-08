@@ -2,53 +2,76 @@ import 'dart:async';
 
 import 'package:build/build.dart';
 
-const substitutionsKey = 'substitutions';
+const assetOverridesKey = 'asset_overrides';
 const fileExtensionsKey = 'file_extensions';
 
-/// Factory function used by the builder definition in `build.yaml`.
+const defaultInfix = '.default';
+
+/// [BuilderFactory] used by the builder definition in `build.yaml`.
 Builder injectAssetsBuilder(BuilderOptions options) {
   final unrecognizedKeys = options.config.keys.toSet()
-    ..remove(substitutionsKey)
+    ..remove(assetOverridesKey)
     ..remove(fileExtensionsKey);
   if (unrecognizedKeys.isNotEmpty) {
-    log.warning('Ignoring unrecognized keys: ${unrecognizedKeys.join(" ")}');
+    log.warning(
+        'Ignoring unrecognized options: ${unrecognizedKeys.join(", ")}');
   }
 
-  return InjectAssetsBuilder(_extractSubstitutionsConfig(options),
-      _extractFileExtensionsConfig(options));
+  final buildExtensions = _extractFileExtensionsConfig(options);
+  return InjectAssetsBuilder(
+      _extractAssetOverridesConfig(options, buildExtensions.keys),
+      buildExtensions);
 }
 
-Map<AssetId, AssetId> _extractSubstitutionsConfig(BuilderOptions options) {
+Map<AssetId, AssetId> _extractAssetOverridesConfig(
+    BuilderOptions options, Iterable<String> defaultFileExtensions) {
+  final expectedFileEndings =
+      RegExp('(${defaultFileExtensions.map(RegExp.escape).join("|")})\$');
+
   final result = <AssetId, AssetId>{};
-  final rawSubstitutions = options.config[substitutionsKey];
-  if (rawSubstitutions is Map) {
-    rawSubstitutions.forEach((defaultAsset, substitution) {
-      result[AssetId.parse(defaultAsset)] = AssetId.parse(substitution);
+  final rawAssetOverrides = options.config[assetOverridesKey];
+
+  if (rawAssetOverrides is Map) {
+    rawAssetOverrides.forEach((defaultAsset, overrideName) {
+      if (!expectedFileEndings.hasMatch(defaultAsset)) {
+        log.warning("This builder doesn't run on $defaultAsset");
+      }
+      result[AssetId.parse(defaultAsset)] = AssetId.parse(overrideName);
     });
+  } else if (rawAssetOverrides != null) {
+    log.warning('`$assetOverridesKey` must be Map<String, String>, '
+        'but got ${rawAssetOverrides.runtimeType}');
   }
   return result;
 }
 
 Map<String, List<String>> _extractFileExtensionsConfig(BuilderOptions options) {
   final result = <String, List<String>>{};
-  if (options.config[fileExtensionsKey] is List) {
-    for (final extension in options.config[fileExtensionsKey]) {
-      result['.default$extension'] = [extension];
+  final rawFileExtensions = options.config[fileExtensionsKey];
+
+  if (rawFileExtensions is List) {
+    for (final extension in rawFileExtensions) {
+      result['$defaultInfix$extension'] = [extension.toString()];
     }
+  } else if (rawFileExtensions == null) {
+    log.warning('No `$fileExtensionsKey` configured. '
+        'This completely disables the builder!');
+  } else {
+    log.warning('`$fileExtensionsKey` must be a List<String>, '
+        'but got ${rawFileExtensions.runtimeType}');
   }
   return result;
 }
 
-///
 class InjectAssetsBuilder implements Builder {
-  InjectAssetsBuilder(this.substitutions, this.buildExtensions);
+  InjectAssetsBuilder(this.assetOverrides, this.buildExtensions);
 
-  final Map<AssetId, AssetId> substitutions;
+  final Map<AssetId, AssetId> assetOverrides;
   final Map<String, List<String>> buildExtensions;
 
   Future<dynamic> build(BuildStep buildStep) async {
     final defaultAsset = buildStep.inputId;
-    var source = substitutions[defaultAsset];
+    var source = assetOverrides[defaultAsset];
     if (source == null) {
       log.info('No substitution configured for asset $defaultAsset, '
           'using the default asset');
@@ -56,16 +79,15 @@ class InjectAssetsBuilder implements Builder {
     }
     final target =
         AssetId(defaultAsset.package, _removeDefaultInfix(defaultAsset.path));
-    log.info('Copying asset $source to $target');
+    log.fine('Copying asset $source to $target');
     return buildStep.writeAsString(
         target, await buildStep.readAsString(source));
   }
 
   /// Converts a path `foo/bar.default.txt` to `foo/bar.txt`.
   String _removeDefaultInfix(String path) {
-    const defaultFileInfix = '.default';
-    final index = path.lastIndexOf(defaultFileInfix);
+    final index = path.lastIndexOf(defaultInfix);
     return path.substring(0, index) +
-        path.substring(index + defaultFileInfix.length);
+        path.substring(index + defaultInfix.length);
   }
 }

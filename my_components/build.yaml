@@ -1,20 +1,7 @@
 targets:
+  # When a package depending on `dep` is built, this build target is
+  # automatically built too.
   $default:
     builders:
-      my_components|inject_scss_variables:
+      inject_assets_builder|inject_scss_files:
         enabled: true
-        generate_for:
-          include:
-            - 'lib/_variables.default.scss'
-
-builders:
-  inject_scss_variables:
-    import: "package:inject_assets_builder/builder.dart"
-    builder_factories: ["injectAssetsBuilder"]
-    build_extensions:
-      '.default.scss': ['.scss']
-    defaults:
-      options:
-        file_extensions: ['.scss']
-    runs_before:
-      - sass_builder

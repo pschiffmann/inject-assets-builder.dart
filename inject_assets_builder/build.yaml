@@ -1,0 +1,15 @@
+builders:
+  inject_scss_files:
+    import: "package:inject_assets_builder/builder.dart"
+    builder_factories: ["injectAssetsBuilder"]
+    # Must follow the pattern: `'.default.<extension>': ['.<extension>']`
+    build_extensions:
+      '.default.scss': ['.scss']
+      '.default.sass': ['.sass']
+    # We need to repeat the extensions here, or the builder won't run.
+    # See https://github.com/dart-lang/build/issues/590 for details.
+    defaults:
+      options:
+        file_extensions:
+          - '.scss'
+          - '.sass'
