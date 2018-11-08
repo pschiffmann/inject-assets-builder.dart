@@ -1,7 +1,0 @@
-name: my_components
-environment:
-  sdk: '>=2.0.0 <3.0.0'
-dependencies:
-  inject_assets_builder:
-    path: ../inject_assets_builder
-  sass_builder: ^2.1.2

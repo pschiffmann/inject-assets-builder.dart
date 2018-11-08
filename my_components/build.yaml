@@ -1,7 +1,0 @@
-targets:
-  # When a package depending on `dep` is built, this build target is
-  # automatically built too.
-  $default:
-    builders:
-      inject_assets_builder|inject_scss_files:
-        enabled: true
